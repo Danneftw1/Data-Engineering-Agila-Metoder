@@ -1,0 +1,3 @@
+Write this text string into
+Hello from note_home
+current directory is: /c/Github/Data-Engineering-Agila-Metoder
