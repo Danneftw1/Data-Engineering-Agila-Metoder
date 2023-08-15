@@ -10,3 +10,4 @@ RUN pip install plotly_express dash scikit-learn
 
 # Run ex1_0_setup.py when the container starts
 CMD ["python", "src/ex1_0_setup.py"]
+
