@@ -13,6 +13,12 @@ You can also type 'reset' to clear the terminal for easier reading
 reset
 ```
 
+Another tip is that you can read files with having to jump through folders by just typing out the full directory like this:
+
+```bash
+cat inhere/maybehere07/-file2
+```
+
 # Bandit level 0
 
 The goal of this level is for you to log into the game using SSH. The host to which you need to connect is bandit.labs.overthewire.org, on port 2220. The username is bandit0 and the password is bandit0. Once logged in, go to the Level 1 page to find out how to beat Level 1.
@@ -67,19 +73,54 @@ cat .hidden
 
 # Bandit level 4
 
-The password for the next level is stored in the only human-readable file in the inhere directory. Tip: if your terminal is messed up, try the “reset” command.
+The password for the next level is stored in the only human-readable file in the inhere directory.
+
+### Commands you may need to solve this level
+
+ls , cd , cat , file , du , find 
+---
+```bash
+file ./*
+```
+
+<img src="../assets/bandit4.png" width = 400>
+
+Lists the files in the directory along with their type. We can now easily see which of the files is readable (ASCII)
+
+---
+```bash
+cat < -file07
+```
+
+# Bandit level 5
+
+The password for the next level is stored in a file somewhere under the inhere directory and has all of the following properties:
+
+- human-readable
+- 1033 bytes in size
+- not executable
 
 ### Commands you may need to solve this level
 
 ls , cd , cat , file , du , find
 
+Since we know how to check if its human readable, lets instead try searching for all files in the directory that is of the size 1033 bytes. 
+
 ---
 ```bash
-
+find -type f -size 1033c
 ```
 
+"-type f" Ensures that you're only searching for regular files and not directories or other types of files.
 
+"-size 1033c" specifies the size condition, where "c" suffix indicates that the size is specified in bytes.
 
+You can also list all files and their bytesize within the folder you're in by doing this:
+
+```bash
+du -b -a
+```
+<img src="../assets/bandit5.png" width = 300>
 
 
 # Bandit level 
