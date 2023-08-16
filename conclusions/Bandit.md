@@ -149,8 +149,71 @@ find / -type f -size 33c -user bandit7 -group bandit6
 We can then read through all the files in order to find something that doesn't have "permission denied" next to it, and in this case the file is simply named "/var/lib/dpkg/info/bandit7.password". Once we have this we can just easily type "cat /var/lib/dpkg/info/bandit7.password" in order to retrieve our password.
 
 
+
 # Bandit level 7
 
+The password for the next level is stored in the file data.txt next to the word millionth
+
+### Commands you may need to solve this level
+
+man, grep, sort, uniq, strings, base64, tr, tar, gzip, bzip2, xxd
+
+---
+```bash
+grep "millionth" data.txt
+```
+This shows the entire row which has the word "millionth" in it. We also have to specify the file that we want to read.
+
+
+
+# Bandit level 8
+
+The password for the next level is stored in the file data.txt and is the only line of text that occurs only once
+
+### Commands you may need to solve this level
+
+grep, sort, uniq, strings, base64, tr, tar, gzip, bzip2, xxd
+
+---
+```bash
+sort data.txt | uniq -u
+```
+
+"sort" is essential before using 'uniq' because 'uniq' only removes consecutive duplicate lines.
+"uniq" used without any options, filters out consecutive identical lines
+"-u" used with "uniq" prints only unique lines
+
+
+
+# Bandit level 9
+
+The password for the next level is stored in the file data.txt in one of the few human-readable strings, preceded by several ‘=’ characters.
+
+### Commands you may need to solve this level
+
+grep, sort, uniq, strings, base64, tr, tar, gzip, bzip2, xxd
+
+---
+```bash
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Bandit level 0
+
 
 
 ### Commands you may need to solve this level
@@ -163,18 +226,3 @@ We can then read through all the files in order to find something that doesn't h
 ```
 
 
-
-
-
-# Bandit level 
-
-
-
-### Commands you may need to solve this level
-
-
-
----
-```bash
-
-```
