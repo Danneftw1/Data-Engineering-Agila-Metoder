@@ -234,9 +234,31 @@ grep, sort, uniq, strings, base64, tr, tar, gzip, bzip2, xxd
 
 ---
 ```bash
-
+echo "Gur cnffjbeq vf WIAOOSFzMjXXBC0KoSKBbJ8puQm5lIEi" | tr '[a-z][A-Z]' '[n-za-m][N-ZA-M]'
 ```
 
+First we read the file to be able to copy the encoded text. Then we type this:
+
+"tr" - translate or delete characters to substitute characters
+
+"[A-Z][a-z]" - Indicates the range of characters to be translated. It covers all lowercase and uppercase English letters.
+
+"[n-za-m][N-ZA-M]" This indicates the range of characters to translate to. The lowercase letters a to z will be translated to n to m. This is followed by a to m (this is the ROT13 shift)
+
+
+
+# Bandit level 12
+
+The password for the next level is stored in the file data.txt, which is a hexdump of a file that has been repeatedly compressed. For this level it may be useful to create a directory under /tmp in which you can work using mkdir. For example: mkdir /tmp/myname123. Then copy the datafile using cp, and rename it using mv (read the manpages!)
+
+### Commands you may need to solve this level
+
+grep, sort, uniq, strings, base64, tr, tar, gzip, bzip2, xxd, mkdir, cp, mv, file
+
+---
+```bash
+
+```
 
 
 
