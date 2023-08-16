@@ -195,15 +195,47 @@ grep, sort, uniq, strings, base64, tr, tar, gzip, bzip2, xxd
 
 ---
 ```bash
-
+strings data.txt grep '='
 ```
 
+"strings" - command-line utility that prints the sequences of printable characters in a file. ESPECIALLY USEFUL WHEN DEALING WITH BINARY FILES.
+
+"grep '='" - usezd for searching within files for something specific. Finds lines that match a given pattern.
 
 
 
+# Bandit level 10
+
+The password for the next level is stored in the file data.txt, which contains base64 encoded data
+
+### Commands you may need to solve this level
+
+grep, sort, uniq, strings, base64, tr, tar, gzip, bzip2, xxd
+
+---
+```bash
+cat data.txt
+```
+We first need to just read the file in order to be able to copy the base64 data.
+```bash
+echo "VGhlIHBhc3N3b3JkIGlzIDZ6UGV6aUxkUjJSS05kTllGTmI2blZDS3pwaGxYSEJNCg==" | base64 -d
+```
+Then we print out the decoded data by using echo and "base 64 -d". In other words; we pipe the encoded string in to 'base 64 -d' which decodes it.
 
 
 
+# Bandit level 11
+
+The password for the next level is stored in the file data.txt, where all lowercase (a-z) and uppercase (A-Z) letters have been rotated by 13 positions
+
+### Commands you may need to solve this level
+
+grep, sort, uniq, strings, base64, tr, tar, gzip, bzip2, xxd
+
+---
+```bash
+
+```
 
 
 
