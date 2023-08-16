@@ -257,8 +257,10 @@ grep, sort, uniq, strings, base64, tr, tar, gzip, bzip2, xxd, mkdir, cp, mv, fil
 
 ---
 ```bash
-
+cp data.txt /tmp/daniel/
+cd /tmp/daniel123/
 ```
+We first create the temporary directory which has a copy of the hexdump
 
 
 
