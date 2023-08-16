@@ -122,6 +122,49 @@ du -b -a
 ```
 <img src="../assets/bandit5.png" width = 300>
 
+--- 
+
+# Bandit level 6
+
+The password for the next level is stored somewhere on the server and has all of the following properties:
+
+- owned by user bandit7
+- owned by group bandit6
+- 33 bytes in size
+
+### Commands you may need to solve this level
+
+ls , cd , cat , file , du , find , grep
+
+First we use 'find' to search for all files that follows our conditions above:
+
+---
+```bash
+find / -type f -size 33c -user bandit7 -group bandit6
+```
+
+"find /" - This initiates the find command starting from the root directory (/), meaning it will search the entire filesystem.
+"-type f" - This restricts the search to only regular files (excludes directories, symbolic links, etc.).
+
+We can then read through all the files in order to find something that doesn't have "permission denied" next to it, and in this case the file is simply named "/var/lib/dpkg/info/bandit7.password". Once we have this we can just easily type "cat /var/lib/dpkg/info/bandit7.password" in order to retrieve our password.
+
+
+# Bandit level 7
+
+
+
+### Commands you may need to solve this level
+
+
+
+---
+```bash
+
+```
+
+
+
+
 
 # Bandit level 
 
