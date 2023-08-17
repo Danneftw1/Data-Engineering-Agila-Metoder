@@ -13,7 +13,7 @@ You can also type 'reset' to clear the terminal for easier reading
 reset
 ```
 
-Another tip is that you can read files with having to jump through folders by just typing out the full directory like this:
+Another tip is that you can read files without having to jump through folders by just typing out the full directory like this:
 
 ```bash
 cat inhere/maybehere07/-file2
