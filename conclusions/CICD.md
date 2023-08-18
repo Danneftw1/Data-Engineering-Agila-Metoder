@@ -135,7 +135,7 @@ pipenv install black isort
 ```
 If you've got multiple harddrives, you can check what harddrives are available and how much space is left.
 ```bash
-pipenv df -h
+df -h
 ```
 Then you select your harddrive
 
