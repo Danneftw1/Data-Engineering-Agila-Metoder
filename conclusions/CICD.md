@@ -155,4 +155,4 @@ pytest -s test_print_joke.py
 ```
 ...and it should look something like this:
 
-![Alt text](screenshots-markdown\image2.png)
+<img src="screenshots-markdown/image2.png" alt="Alt text" width="850"/>
