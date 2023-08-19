@@ -136,13 +136,27 @@ The Scrum Team inspect last Sprint with regards to **individuals, interactions, 
 ---
 # Scrum Artifacts
 
-### Purpose 
+**Purpose**:
+
 Artifacts in Scrum symbolize work or value and are structured to optimize the transparency of vital information, ensuring a consistent basis for modification for all evaluators.
 
-### Commitments
+**Commitments**:
 * **Product Backlog**: Guided by the **Product Goal**.
 * **Sprint Backlog**: Anchored by the **Sprint Goal**.
 * **Increment**: Governed by the **Definition of Done**.
 
-### Significance
+ **Significance**:
+
 These commitments bolster empirical practices and uphold the Scrum values, benefiting both the Scrum Team and associated stakeholders.
+
+## Product Backlog
+
+* An evolving list detailing product enhancements.
+* Items are calrified via refinement, where they're detailed and sized.
+* Developers size tasks; the Product Owner aids in understanding options.
+
+### Commitment: Product Goal 
+
+* A future vision of the product in the Product Backlog.
+* A product delivers value and can be a service, tangible item, or abstract.
+* Acts as a sustained aim for the team; one goal must be concluded before another.
