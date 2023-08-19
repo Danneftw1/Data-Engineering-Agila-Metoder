@@ -1,3 +1,7 @@
+# Scrum overview infographic
+
+<img src="screenshots-markdown/image5.png" alt="Alt text" width="800"/>
+
 # Scrum Definition
 
 Lightweight framwork that helps people, teams and organizations generate value through adaptive solutions for complex problems. The Scrum framwork is purposefully incomplete, only defining the parts required to implement Scrum Theory. 
@@ -99,4 +103,46 @@ Fixed length events of one month or less to create consistency. A new Sprint sta
 
 Sprints enable predictability by ensuring inspection and adaptation of progress toward a Product Goal at least every calender month. Shorter sprints can be employed to generate more learning cycles and limit risk of cost and effort to a smaller time frame.
 
-## Sprint Planning
+### Sprint Planning
+
+* **Purpose**: Initiates the Sprint, defining the work to be performed.
+* **Collaboration**: The entire Scrum Team collaborates on the plan.
+* **Role of Product Owner**:  Ensures attendees are prepared, discussing important Product Backlog items and their alignment with the Product Goal. Other individuals may be invited for advice.
+* **Key Topics**: 
+1. **Why is this Sprint valuable?** Product Owner proposes value additions, and the team collaborates on a Sprint Goal. This goal must be finalized by the end of the Sprint Planning.
+2. **What can be Done this Sprint?** Developers, through discussions, select items from the Product Backlog for the Sprint. The selection process may refine items, enhancing clarity and confidence. The extent of completion is gauged based on past performance, upcoming capacity, and the Definition of Done.
+3. **How will chosen work get done?** Developers plan the breakdown and execution of selected items, typically into tasks of a day or less. The methodology is at the Developers' discretion. The resultant is termed the Sprint Backlog.
+* **Duration** Timeboxed to a maximum of eight hours for a one month Sprint; shorter for less than a month.
+
+### Daily Scrum
+
+* **Purpose**: Inspect progress toward the Sprint Goal and adapt the Sprint Backlog.
+* **Format**: A 15-minute event for Developers, held consistently.
+* **Participation**: If the Product Owner or Scrum Master is actively involved in the Sprint tasks, they join as Developers.
+* **Focus**: Developers choose their format, aiming to emphasize progress towards the Sprint Goal and create a plan for the next day, fostering focus and self-management.
+* **Benefits**: Enhances communication, identifies obstacles, supports swift devision-making, and minimizes the need for other meetings.
+* **Flexibility**: Daily Scrum is not the only planning time. Developers can discuss and adjust plans throughout the day.
+
+### Sprint Retrospective
+
+The **purpose** is to plan ways to increase quality and effectiveness through retrospection of a previous Sprint.
+
+The Scrum Team inspect last Sprint with regards to **individuals, interactions, processes, tools,** and **their Definition of Done.**
+* Inspected elements often vary with the domain of work.
+* Assumptions that led them astray are identified and their origins explored.
+* Scrum Team discusses what went well and what didn't, and how those problems were (or were not) solved.
+* **The Sprint Retrospective** concludes the **Sprint** - Timeboxed to a max 3 hours for a one-month **Sprint**.
+
+---
+# Scrum Artifacts
+
+### Purpose 
+Artifacts in Scrum symbolize work or value and are structured to optimize the transparency of vital information, ensuring a consistent basis for modification for all evaluators.
+
+### Commitments
+* **Product Backlog**: Guided by the **Product Goal**.
+* **Sprint Backlog**: Anchored by the **Sprint Goal**.
+* **Increment**: Governed by the **Definition of Done**.
+
+### Significance
+These commitments bolster empirical practices and uphold the Scrum values, benefiting both the Scrum Team and associated stakeholders.
