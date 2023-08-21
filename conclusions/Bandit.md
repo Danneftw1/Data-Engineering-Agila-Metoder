@@ -258,23 +258,76 @@ grep, sort, uniq, strings, base64, tr, tar, gzip, bzip2, xxd, mkdir, cp, mv, fil
 
 ---
 ```bash
-cp data.txt /tmp/daniel/
+mkdir /tmp/daniel123
+cp data.txt /tmp/daniel123/
 cd /tmp/daniel123/
 ```
-We first create the temporary directory which has a copy of the hexdump
+We first create the temporary directory which has a copy of the hexdump.
+
+Once the temp directory is created we now need to start off by converting the Hexdump to Binary. -r reverses the hexdump
+
+```bash
+xxd -r data.txt > data
+```
+
+Now we need to decompress repeatedly, use 'file' command to determine what type of file 'data' is.
 
 
+```bash
+file data
+```
+NOW, depending on outcome of 'file data', you will need to check if it's a: gzip, bzip2 or tar. Since I've got a gzip file and it's compressed (says compressed in bash after you check file data.bin)
 
+![Alt text](image.png)
 
+```bash
+mv data file.gz
+gzip -d file.gz
+```
+
+When we've decompressed gzip, now we can see that it's a bzip2 compressed data
+
+![Alt text](image-1.png)
+
+We now change the file to a bz2 file
+
+```bash
+mv file file.bz2
+bzip2 -d file.bz2
+```
+![Alt text](image-2.png)
+
+We can now see that it's a gzip compressed data AGAIN, all we have to do is the same step as above for gzip
+
+![Alt text](image-3.png)
+
+Now it's tar compressed data, which means that'll we need to do: 
+
+```bash
+mv file file.tar
+tar xf file.tar
+```
+
+When we now list directory we've recieved both a "file.tar" and "data5.bin". It should look something like this:
+
+![Alt text](image-4.png)
+
+"data5.bin" is also a tar file, which means that we can remove "file.tar" and "data.txt" to make it easier.
+
+Compress "data5.bin" (follow steps for tar decompressing above), which gives you "data6.bin".
+
+Compress "data6.bin". This will give you a file called "data" which is tar compressed.
+
+Compress "data". This will give you "data8.bin" which is gzip compressed data.
+
+Compress "data8.bin". This will give you "data" which is an ASCII text. Just read the file "cat data" and you've found the password.
 
 
 
 # Bandit level 0
 
 
-
 ### Commands you may need to solve this level
-
 
 
 ---
