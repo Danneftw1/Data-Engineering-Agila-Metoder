@@ -1,16 +1,14 @@
-# Use the Python 3.9 image
-# Sets the base image to Python 3.9
 FROM python:3.9
 
-# Set the working directory inside the container to /Exercise1
-WORKDIR /Exercise1
+# Add the entire src directory to the container at /Exercise1/src
+ADD src /Exercise-1-docker/src
 
-# Copy the src folder and Dockerfile into the container at /Exercise1
-COPY src/ ./src/
-COPY Dockerfile .
+# Installing required packages with pip
+USER root
+RUN pip install plotly_express sklearn
 
-# Install the required packages
-RUN pipenv install matplotlib plotly_express pandas numpy dash sklearn
+# Specify the working directory as /Exercise1 inside the container
+WORKDIR /Exercise-1-docker
 
 # Run ex1_0_setup.py when the container starts
 CMD ["python", "src/ex1_0_setup.py"]
