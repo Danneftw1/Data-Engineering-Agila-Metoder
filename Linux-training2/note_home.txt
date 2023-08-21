@@ -1,2 +1,0 @@
-hello from note_home
-current_directory is: /c/Github/Data-Engineering-Agila-Metoder/Linux-training2
