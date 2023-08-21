@@ -52,6 +52,7 @@ WORKDIR /Exercise1
 # Run ex1_0_setup.py when the container starts
 CMD ["python", "src/ex1_0_setup.py"]
 ```
+In my case this might not work, when creating the image you have to remove packages one at a time to figure out which doesn't work and what does work (only need to do this if you're getting package errors when trying to create image).
 
 c) Create a docker image with name ex1-image
 
@@ -66,6 +67,19 @@ d) Spin up your docker container and name it ex1-container.
 ```bash
 $ docker run -it --name ex1-container ex1-image
 ```
+If you're having issues with creating a container that stays active and doesn't exit immidietly, follow this instead:
+
+```bash
+$ docker run -dit ubuntu
+```
+Then rename the container to desired name: Stop container, rename, start again
+
+```bash
+$ docker stop <old-container-name>
+$ docker rename <old-container-name> <new-container-name>
+$ docker start <new-container-name>
+```
+
 e) Go into your container and make sure that these packages are installed.
 - Answer
 ```bash
