@@ -60,9 +60,9 @@ multi_line_output = 3
 ---
 # Varje script förklarat
 
-## **dashboard.py**
+*Kodexempel nedan är inte koden i dess helhet, endast korta utdrag*
 
-*Kodexempel nedan är inte koden i dess helhet, endast korta utdrag* 
+## **dashboard.py** 
 
 Skapar en webdashboard som visar sammanfattningar av artiklar från olika källor (MIT, Google & AI Blog). Använder sig utav Dash för att skapa en interface.
 
@@ -159,7 +159,7 @@ def main(blog_name):
 # Sparar den via save_metadata_info()
 
 def parse_args():
-# Använder 'argparse'-biblioteket för att läsa kommandordsargument.
+# Använder 'argparse'-biblioteket för att läsa kommandordsargument (terminal).
 # Retunerar en parserad lista med argument.
 
 if __name__ == "__main__":
@@ -168,3 +168,5 @@ if __name__ == "__main__":
 # Kör parse_args() för hämta argument via terminalen
 # Kör Main-funktionen med angivna bloggnamnet.
 ```
+
+## **extract_articles.py**
