@@ -116,6 +116,13 @@ def display_blogs(choice):
 # Utlöses baserat på ett annat dropdown-val.
 # Visar titeln, utgivningsdatum, sammanfattningen och länken till artikeln från den källa som speciferas i 'choice'.
 ```
+---
+
+## **layout.py**
+
+Använder ett webbapplikationsramverk, och Dash Bootstrap Components för att styla webbsidan. Koden definierar layouten av en webbsida, inklusive olika element som kort, rader och kolumner, för att visa olika typer av innehåll.
+
+Det är lite svårt att sammanfatta vad som sker genom koden, så jag har valt att inte ha med kodexempel här.
 
 ---
 ## **datatypes.py**
@@ -170,3 +177,105 @@ if __name__ == "__main__":
 ```
 
 ## **extract_articles.py**
+
+Den här koden bearbetar bloggartiklar. Den läser in en XML-fil med metadata, extraherar informationen om varje artikel och sparar den i JSON-format.
+
+### Funktioner
+
+```py
+def create_uuid_from_string(title):
+# Skapar en unik identifierare baserad på  artikelns titel
+
+def load_metadata(blog_name):
+# Läser in XML-metadata från en fil
+# Retunerar filen som ett BeautifulSoup-objekt för vidare bearbetning
+
+def extract_articles_from_xml(parsed_xml):
+# Tar in BeautifulSoup-objektet som argument (parsade XML-data) och extraherar artiklar.
+# Skapar en lista med 'BlogInfo'-object
+
+def save_articles(articles, blog_name):
+# Sparar artiklarna som JSON-filer i specifik map.
+
+def main(blog_name):
+# Kör funktionerna ovan
+def parse_args():
+# Gör så att man kan skriva "--blogg_name" i terminalen
+```
+
+---
+
+## **send_summaries_to_discord.py**
+
+Hämtar, formaterar och skickar sammanfattningar till en Discord-webhook.
+
+*Async: Tillåter ditt program att starta potentiellt långvariga uppgifter och fortfarande vara mottaglig till andra händelser medans den uppgiften körs, istället för att behöva vänta tills den uppgiften har slutförts*
+
+### Funktioner
+
+```py
+async def get_articles_from_folder(folder_path):
+# Asynkront läser in JSON-filer från en specifik mapp och returnerar en lista av artiklar
+
+def format_summary_message(summary_item, group_name):
+# Formaterar sammanfattningar av artiklar för att skickas till Discord
+
+async def send_summary_to_discord(blog_name):
+# Använder asynkron HTTP-session för att skicka formaterade artikelmeddelanden till en Discord-webhook
+
+if __name__ == "__main__":
+    args = utils.parse_args()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(send_summary_to_discord(blog_name=args.blog_name))
+# kör parge_args()
+# Initialiserar en asynkron loop och kör funktionen send_summary_to_discord tills den är klar.
+```
+---
+
+## **summarize.py**
+
+Den kod tar ett bloggnamn som kommandoradsargument, läser in dess artiklar, genererar sammanfattningar med hjälp av GPT-3.5 turbo och sparar dessa sammanfattningar i en mapp.
+
+### Funktioner
+
+```py
+def get_articles_from_folder(blog_name):
+# Läser in JSON-filer som representerar artiklar från data/data warehouse och returnerar en lista av artiklar.
+
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
+# Laddar in vår GPT API key från .env filen
+# Detta är inte en funktion, kan dock va bra att ha med
+
+def summarize_text(blog_text):
+# Använder GPT-3.5 turbo för att generera en sammanfattning av en given text.
+
+def transform_to_summary(article: BlogInfo) -> BlogSummary:
+# Tar en BlogInfo-instans, genererar en sammanfattning och returnerar en BlogSummary-instans (datatypes.py)
+
+def save_blog_summaries(articles, blog_name):
+# Sparar genererade sammanfattning i en särskild mapp i data warehouse.
+
+if __name__ == "__main__":
+    args = (utils.parse_args())  
+    blog_name = args.blog_name
+    articles = get_articles_from_folder(blog_name)
+    save_blog_summaries(articles, blog_name)
+# Använder parse_args() för terminal
+# Anropar get_articles_from_folder och save_blog_summaries för att generera och spara sammanfattningar.
+```
+
+---
+
+## **utils.py**
+
+Innehåller en funktion parse_args(), som använder argparse för att tolka ett kommandoradsargument ('--blog_name') och returnera det som ett 'Namespace'-objekt. Detta argument är avsett att specificera vilken bloggkälla som ska behandlas.
+
+### Funktioner
+
+```py
+def parse_args():
+# Skapar en 'argparse.ArgumentParzer'-instans för att tolka kommandoradsargument
+# Lägger till ett argument '--blog_name' av typen 'str', som avsett att ta emot namnet på en specifik bloggkälla.
+# Returnerar ett 'Namespace'-objekt som innehåller de argument som har tolkats från kommandoraden.
+```
