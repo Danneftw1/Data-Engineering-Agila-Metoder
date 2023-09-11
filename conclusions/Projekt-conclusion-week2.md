@@ -9,7 +9,7 @@ Vi extraherar och parsar sedan artiklarna, det här gör att vi kan plocka ut ti
 
 Efter det här steget så kan vi nu använda våran summarize.py fil som använder sig utav gpt-3.5 för att sammanfatta texterna i artiklarna. Den läser en .json artikel från vårat data warehouse, sammanfattar och sparar sedan sammanfattningen i en separat map i data warehouse.
 
-När vi har våra sparade sammanfattningar så kör vi vår dashboard. Dashboarden inkluderar en dropdown meny där användaren kan välja vilken blogg som ska visas. Varje resultat inkluderar titel, date published, artikellänk till blogg och vår AI-genererade sammanfattning av artikeln.
+När vi har våra sparade sammanfattningar så kör vi vår dashboard. Dashboarden inkluderar svenska och engelska översättningar. Vi har också en dropdown meny där användaren kan välja vilken blogg som ska visas. Varje resultat inkluderar titel, date published, artikellänk till blogg och vår AI-genererade sammanfattning av artikeln.
 
 *: *RSS feed: Möjliggör att användaren kan prenumerera på webbflöden, man blir omedelbart kontaktad när något nytt publiceras.*
 
@@ -66,18 +66,24 @@ multi_line_output = 3
 
 Skapar en webdashboard som visar sammanfattningar av artiklar från olika källor (MIT, Google & AI Blog). Använder sig utav Dash för att skapa en interface.
 
-Den skapar först en Dash app och importerar interface-designen. Sedan letar den upp artiklarna och sammanfattningar där dem är sparade.
+Den skapar först en Dash app och importerar interface-designen, samt pathen för alla våra artiklar, sammanfattningar och deras språk.
 
 ```py
-app = dash.Dash
+from newsfeed.utils import (
+    NEWS_ARTICLES_ARTICLE_SOURCES,
+    NEWS_ARTICLES_SUMMARY_SOURCES,
+    SWEDISH_NEWS_ARTICLES_SUMMARY_SOURCES,
+    formated_source,
+    source_dict,
+)
+
+app = dash.Dash(
+    __name__,
+    meta_tags=[dict(name="viewport", content="width=device-width, initial-scale=1.0")],
+)
 app.layout = layout
 
-NEWS_ARTICLES_SUMMARY_SOURCES = {
-    "mit": Path(__file__).parent.parent.parent / f"data/data_warehouse/mit/summaries"
-    ...
-NEWS_ARTICLES_ARTICLE_SOURCES = {
-    "mit": Path(__file__).parent.parent.parent / f"data/data_warehouse/mit/articles"
-    ...
+server = app.server
 ```
 ### Funktioner:
 
@@ -87,8 +93,12 @@ def read_json_files_to_df(folder_path):
 # Omvandlar dessa filer till en dataframe
 
 def get_news_data(news_blog_source="all_blogs"):
-# Samlar data från en specifik källa eller alla beroende på ditt argument
-# Hämtar datan via read_json_files_to_df
+# Hämtar nyhetsdata antingen från alla källor eller en specifik källa, beroende på parametrarna.
+# Stödjer också engelska och svenska.
+
+def fetch_and_prepare_articles(language, df):
+# Hämtar och förbereder artiklar för visning, 
+# kompletterar dem med ytterligare data (ex: datum, länk)
 ```
 
 ### Dash Callbacks
@@ -96,33 +106,87 @@ def get_news_data(news_blog_source="all_blogs"):
 ```py
 @app.callback(Output("blogs-df", "data"), [Input("data-type-dropdown", "value")])
 def blogs_df(selected_data_type):
-    if selected_data_type == "all_blogs":
-        all_blogs = get_news_data("all_blogs")
-        return all_blogs.to_dict("records")
-    elif selected_data_type == "google_ai":
-        google_ai = get_news_data("google_ai")
-        return google_ai.to_dict("records")
-    ...
-# Denna callbacken utlöses varje gång dropdown-menyn interfacet ändras.
-# Data hämtas baserat på "all_blogs", "mit", etc. Sedan omvandlas datan (från DF till dict) så den kan visas på webbsidan
+    news_data = get_news_data(selected_data_type)
+    return news_data.to_dict("records")
+# Hämtar nyhetsdata baserat på den valda typen och uppdaterar en komponent med ID "blogs-df" i Dash layouten.
+```
+
+```py
+@app.callback(
+    Output("language-store", "data"),
+    [Input("btn-english", "n_clicks"), Input("btn-swedish", "n_clicks")],
+    [State("language-store", "data")],
+)
+def update_language(n_clicks_english, n_clicks_swedish, data):
+# Uppdaterar språkpreferensen baserat på vilken knapp (engelska eller svenska) som klickades.
 ```
 
 ```py
 @app.callback(
     [Output("blog-heading", "children"), Output("content-container", "children")],
-    [Input("dropdown-choice", "value")],
+    [
+        Input("dropdown-choice", "value"),
+        Input("language-store", "data"),
+        Input("search-btn", "n_clicks"),
+    ],
+    [State("blogs-df", "data"), State("search-input", "value")],
 )
-def display_blogs(choice):
-# Utlöses baserat på ett annat dropdown-val.
-# Visar titeln, utgivningsdatum, sammanfattningen och länken till artikeln från den källa som speciferas i 'choice'.
+def display_blogs(choice, language_data, n_clicks, blogs_data, search_query):
+# Hämtar och visar bloggar baserat på flera inputs som dropdown-val, språkpreferens och en search-query. Den sorterar artiklarna efter datum och kan också filtrera dem baserat på sökfrågan.
 ```
 ---
 
-## **layout.py**
+## **layout.py & article_item.py**
 
-Använder ett webbapplikationsramverk, och Dash Bootstrap Components för att styla webbsidan. Koden definierar layouten av en webbsida, inklusive olika element som kort, rader och kolumner, för att visa olika typer av innehåll.
+Layout.py ställe in "skalet" eller den övergripande strukturen i vår app. article_item.py fokuserar på att fylla det "skalet" med faktiska nyhetsartiklar och deras detaljer, anpassade till användarens språkpreferenser.
 
-Det är lite svårt att sammanfatta vad som sker genom koden, så jag har valt att inte ha med kodexempel här.
+### Layout.py: 
+Sätter upp applikationens rubrik, logotyp, rullgardinsmenyer för att välja nyhetstyp, ett sökfält och den primära innehållsbehållaren. där nyhetsartiklarna kommer att visas. Varje del av layouten är innesluten i funktioner. Nedan kan vi se ett exempel på logotypen på dashboarden:
+
+```py
+def create_logo():
+    """Creates the logo section of the layout"""
+    return dbc.Col(
+        dbc.Card(
+            dbc.CardBody(
+                [
+                    html.Img(
+                        id="midjourney-logo",
+                        src="assets/midjourney-logo.png",
+                        style={
+                            "position": "absolute",
+                            "top": "-2%",
+                            "left": "-2%",
+                            "width": "300px",
+                        },
+                    )
+                ]
+            ),
+        )
+    )
+# Utöver den här funktionen har vi också create_blog_heading som gör samma sak som create_logo
+```
+
+### Article_item.py
+Detta script är mer inriktat på representationen av enskilda nyhetsartiklar. Det definierar hur varje nyhetsartikel kommer att visas inom innehållsbehållaren som vi definierade i layout.py
+
+```py
+def news_artcle_div(
+    title, published_date, technical_summary, non_technical_summary, link, language, article_source
+):
+# Tar emot detaljer om en nyhetsartikel som dess titel, datum, sammanfattningar, länk och källa och returnerar en dictionary som innehåller ett "datum" och en "div"
+# Div:en innehåller HTML-strukturen för att visa den nyhetsartikeln, formaterad baserat på det valda språket.
+```
+
+```py
+def title_heading_for_dashboard(heading: str):
+# Tar en sträng "heading" och returnerar en dash HTML Div med den angivna rubriken stiliserad enligt specifikationerna.
+```
+
+```py
+def dashboard_content_container(children):
+# Tar children-element och returnerar en Dash HTML Div som innehåller dem.
+```
 
 ---
 ## **datatypes.py**
@@ -265,11 +329,15 @@ if __name__ == "__main__":
 # Anropar get_articles_from_folder och save_blog_summaries för att generera och spara sammanfattningar.
 ```
 
+## translation_model.py
+
 ---
 
 ## **utils.py**
 
 Innehåller en funktion parse_args(), som använder argparse för att tolka ett kommandoradsargument ('--blog_name') och returnera det som ett 'Namespace'-objekt. Detta argument är avsett att specificera vilken bloggkälla som ska behandlas.
+
+Utöver detta så har vi paths till olika mappar som vi behöva komma åt i andra scripts, men eftersom dem tar upp så mycket plats så är det bättre att bara importera om man behöver dem i en annan fil.
 
 ### Funktioner
 
