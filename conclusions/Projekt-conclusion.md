@@ -197,8 +197,9 @@ Detta script är mer inriktat på representationen av enskilda nyhetsartiklar. D
 def news_artcle_div(
     title, published_date, technical_summary, non_technical_summary, link, language, article_source
 ):
-# Tar emot detaljer om en nyhetsartikel som dess titel, datum, sammanfattningar, länk och källa och returnerar en dictionary som innehåller ett "datum" och en "div"
-# Div:en innehåller HTML-strukturen för att visa den nyhetsartikeln, formaterad baserat på det valda språket.
+# Tar emot detaljer om en nyhetsartikel som dess titel, datum, sammanfattningar, 
+# länk och källa och returnerar en dictionary som innehåller ett "datum" och en "div"
+# Div:en innehåller HTML-strukturen för att visa den nyhetsartikeln, formaterad baserat på språket.
 ```
 
 ```py
@@ -268,7 +269,8 @@ def load_metadata(blog_name):
 ```
 ```py
 def extract_openai_articles(soup):
-# Med det tolkade XML/HTML-innehållet skrapar denna funktion OpenAIs blogg och samlar olika detaljer om varje blogginlägg, inklusive titel, beskrivning, URL och det faktiska blogginnehållet.
+# Med det tolkade XML/HTML-innehållet skrapar denna funktion OpenAIs blogg,
+# och samlar olika detaljer om varje blogginlägg, inklusive titel, beskrivning, URL och det faktiska blogginnehållet.
 # Den returnerar en lista med BlogInfo-objekt.
 ```
 ```py
@@ -293,7 +295,8 @@ Här använder vi Hugging Face Transformers-biblioteket för att sammanfatta tex
 def summarize_text_with_hugging_face(
     text, model_name="facebook/bart-large-cnn", max_length=250, min_length=25
 ):
-# Tar emot en text att sammanfatta, tillsammans med flera andra valfria parametrar som modellnamn, maximal sammanfattningens längd och minimal sammanfattnignens längd.
+# Tar emot en text att sammanfatta, tillsammans med flera andra valfria parametrar som modellnamn, 
+# maximal sammanfattningens längd och minimal sammanfattnignens längd.
 ```
 
 ---
@@ -312,7 +315,8 @@ async def get_articles_from_folder(folder_path):
 ```
 ```py
 def format_summary_message(summary_item, group_name, language="en"):
-# Tar en artikel, ett gruppnamn och ett språk som argument. Den formaterar artikeln till ett meddelande som kan skicka till Discord. 
+# Tar en artikel, ett gruppnamn och ett språk som argument. 
+# Den formaterar artikeln till ett meddelande som kan skicka till Discord. 
 # Funktionen tar också hänsyn till språket.
 ```
 ```py
@@ -321,7 +325,8 @@ def truncate_string(input_str, max_len):
 ```
 ```py
 def hash_summary(summary):
-# Denna funktion genererar en unik hash för varje sammanfattning. Detta används senare för att kontrollera om sammanfattningen redan har skickat eller inte.
+# Denna funktion genererar en unik hash för varje sammanfattning. 
+# Detta används senare för att kontrollera om sammanfattningen redan har skickat eller inte.
 ```
 ```py
 def read_sent_log():
@@ -331,7 +336,8 @@ def write_sent_log(sent_log):
 ```py
 async def send_summary_to_discord(blog_name, language="en"):
 # Tar ett bloggnamn och ett språk som argument.
-# Den läser alla sammanfattningar från en given mapp, skickar de som ännu inte har skickats till Discord, och uppdaterar sedan loggfilen.
+# Den läser alla sammanfattningar från en given mapp, 
+# skickar de som ännu inte har skickats till Discord, och uppdaterar sedan loggfilen.
 ```
 Detta script innehåller också en main och parse-args funktion
 
@@ -363,7 +369,8 @@ def summarize_text(blog_text):
 ```
 ```py
 def transform_to_summary(article: BlogInfo, model_type) -> BlogSummary:
-# Tar en artikel representerad av ett BlogInfo-objekt, genererar tekniska och icke-tekniska sammanfattningar, och returnerar sedan dem som ett BlogSummary-objekt.
+# Tar en artikel representerad av ett BlogInfo-objekt, genererar tekniska och icke-tekniska sammanfattningar, 
+# och returnerar sedan dem som ett BlogSummary-objekt.
 ```
 ```py
 def save_blog_summaries(articles, blog_name, model_type):
@@ -435,7 +442,8 @@ def test_get_news_data_source_mit():
     df = get_news_data(news_blog_source="mit")
     assert "source" in df.columns
     assert all(df["source"] == "mit")
-# Fungerar korrekt när nyhetskällan är "mit". Det säkerställer att "source"-kolumnen i den returnerade dataframe innehåller endast "mit"
+# Fungerar korrekt när nyhetskällan är "mit". 
+# Det säkerställer att "source"-kolumnen i den returnerade dataframe innehåller endast "mit"
 ```
 Utöver denna finns det två till som gör exakt samma sak, fast för andra nyhetskällor (google_ai & ai_blog)
 
@@ -488,7 +496,8 @@ def test_imports():
             __import__(module)
         except ImportError:
             assert False, f"Failed to import {module}"
-# Säkerställer att alla nödvändiga moduler och paket kan importeras korrekt, vilket indikerar att alla dependencies är uppfyllda.
+# Säkerställer att alla nödvändiga moduler och paket kan importeras korrekt, 
+# vilket indikerar att alla dependencies är uppfyllda.
 ```
 ---
 
@@ -505,5 +514,6 @@ def test_python_version():
     assert (
         major_version == 3 and minor_version == 10
     ), f"The expected and required Python version for this project is 3.10.*, but got {major_version}.{minor_version}.*"
-# Kontrollerar att Python-versionen som används för att köra projektet är 3.10. Om det inte är fallet, genereras ett fel.
+# Kontrollerar att Python-versionen som används för att köra projektet är 3.10. 
+# Om det inte är fallet, genereras ett fel.
 ```
