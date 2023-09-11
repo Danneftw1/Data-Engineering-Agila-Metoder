@@ -46,7 +46,7 @@ install_dependencies:
 	source venv/bin/activate && pip install -r         requirements.txt
 	source venv/bin/activate && pre-commit install --hook-type pre-push --hook-type post-checkout --hook-type pre-commit
 ```
-**Pyproject**: Anger inställningar för olika verktyg i vårt projekt. I vårt fall har vi konfigurationer för två verktyg: Black och Isort. Black formaterar koden på ett speciellt sätt (gör den lättare att läsa), och Isort automatiskt sorterar och organiserar imports för våra scripts.
+**Pyproject**: Anger inställningar för olika verktyg i vårt projekt. I vårt fall har vi konfigurationer för två verktyg: Black och Isort. Black formaterar koden på ett speciellt sätt (gör den lättare att läsa), och Isort automatiskt sorterar och organiserar imports för våra scripts. Utöver detta så konfigurerar vi också pytest för våra tester som ligger i 'tests'-mappen.
 
 ```toml
 [tool.black]
@@ -55,12 +55,35 @@ line-length = 100
 [tool.isort]
 profile = "black"
 multi_line_output = 3
+
+[tool.pytest.ini_options]
+log_cli = 1
+addopts = "-rA -s --strict-markers -m 'local_test'"
+markers = [
+    "local_test: marks tests as local_test that will NOT run on CI/CD (deselect with '-m \"not local_test\"')",
+]
 ```
+
+**Docker**: Docker är en plattform för att utveckla och köra applikationer i containrar. En container innehåller kod och alla dess dependencies så att applikationen kör snabbt och tillförlitligt från en virtual enviroment till en annan. Docker används ofta för att förenkla driftsättning och skalning av applikationer.
+
+```py
+FROM apache/airflow:latest-python3.10
+COPY requirements.txt requirements.txt
+
+RUN grep -v "^-e" requirements.txt > requirements_without_editable_install.txt
+RUN pip install -r requirements_without_editable_install.txt
+# I den här Docker filen skapas en Docker container baserad på en specifik version av Airflow och Python, 
+# kopierar över en fil med Python-library-dependencies,
+# rensar bort "editable" installartioner och installerar sedan de nödvändiga biblioteken. 
+# Detta ger en container som är redo att köra vår applikation.
+```
+
+Utöver detta så har vi också en **Docker-compose.yml** fil. Den används för att definiera och köra flera Docker-containrar som en del av en applikation. Med hjälp av den här filen kan vi konfigurera tjänster, volymer och nätverk för vår applikation direkt i YAML-format. 'docker-compose' kommandot läser sedan denna fil och skapar de definierade tjänsterna och resurserna. Detta gör det enkelt att hantera komplexa applikationer som består av flera containrar.
 
 ---
 # Varje script förklarat
 
-*Kodexempel nedan är inte koden i dess helhet, endast korta utdrag*
+*Kodexempel nedan är inte nödvändigtvis koden i dess helhet, endast korta utdrag*
 
 ## **dashboard.py** 
 
@@ -220,25 +243,14 @@ def get_metadata_info(blog_name):
 # Tar emot namn på en blogg som argument
 # Hämtar den XML-data som finns på bloggens RSS-flöde
 # Returnerar XML-data som en textsträng.
-
+```
+```py
 def save_metadata_info(xml_text, blog_name):
 # Tar emot XML-data och bloggnamnet som argument.
-# Sparar XML-data i en fil i en specifik katalog ("data/data_lake")
-
-def main(blog_name):
-# Hämtar data via get_metadata_info()
-# Sparar den via save_metadata_info()
-
-def parse_args():
-# Använder 'argparse'-biblioteket för att läsa kommandordsargument (terminal).
-# Retunerar en parserad lista med argument.
-
-if __name__ == "__main__":
-    args = parse_args()
-    main(blog_name=args.blog_name)
-# Kör parse_args() för hämta argument via terminalen
-# Kör Main-funktionen med angivna bloggnamnet.
+# Sparar XML-data i en fil i en specifik mapp ("data/data_lake")
 ```
+
+Det här scriptet innehåller både main och parge-args.
 
 ## **extract_articles.py**
 
@@ -249,22 +261,39 @@ Den här koden bearbetar bloggartiklar. Den läser in en XML-fil med metadata, e
 ```py
 def create_uuid_from_string(title):
 # Skapar en unik identifierare baserad på  artikelns titel
-
+```py
 def load_metadata(blog_name):
 # Läser in XML-metadata från en fil
 # Retunerar filen som ett BeautifulSoup-objekt för vidare bearbetning
-
-def extract_articles_from_xml(parsed_xml):
-# Tar in BeautifulSoup-objektet som argument (parsade XML-data) och extraherar artiklar.
-# Skapar en lista med 'BlogInfo'-object
-
+```
+```py
+def extract_openai_articles(soup):
+# Med det tolkade XML/HTML-innehållet skrapar denna funktion OpenAIs blogg och samlar olika detaljer om varje blogginlägg, inklusive titel, beskrivning, URL och det faktiska blogginnehållet.
+# Den returnerar en lista med BlogInfo-objekt.
+```
+```py
+def extract_articles_from_xml(parsed_xml, blog_name):
+# Allmän funktion som extraherar artiklar från det angivna XML-innehållet baserat på blog_name. 
+# Om bloggnamnet är "open_ai" används "extract_openai_articles"; annars tolkas XML för att hitta andra typer av artiklar.
+```
+```py
 def save_articles(articles, blog_name):
 # Sparar artiklarna som JSON-filer i specifik map.
+# Felmeddelandet skickas ifall något går fel här.
+```
+Det här scriptet innehåller också en main och parge-args funktion.
 
-def main(blog_name):
-# Kör funktionerna ovan
-def parse_args():
-# Gör så att man kan skriva "--blogg_name" i terminalen
+## **Hugging_face_model.py**
+
+Här använder vi Hugging Face Transformers-biblioteket för att sammanfatta text med hjälp av en sekvens-till-sekvens maskininlärningsmodell. Vi använde oss utav den här modellen för att kunna köra det lokalt och inte behöva slå i penga-taket konstant som vi gjorde med gpt-3.5. Den är dock inte i närheten lika bra, men fungerar någolunda okej.
+
+### Funktioner
+
+```py
+def summarize_text_with_hugging_face(
+    text, model_name="facebook/bart-large-cnn", max_length=250, min_length=25
+):
+# Tar emot en text att sammanfatta, tillsammans med flera andra valfria parametrar som modellnamn, maximal sammanfattningens längd och minimal sammanfattnignens längd.
 ```
 
 ---
@@ -280,20 +309,32 @@ Hämtar, formaterar och skickar sammanfattningar till en Discord-webhook.
 ```py
 async def get_articles_from_folder(folder_path):
 # Asynkront läser in JSON-filer från en specifik mapp och returnerar en lista av artiklar
-
-def format_summary_message(summary_item, group_name):
-# Formaterar sammanfattningar av artiklar för att skickas till Discord
-
-async def send_summary_to_discord(blog_name):
-# Använder asynkron HTTP-session för att skicka formaterade artikelmeddelanden till en Discord-webhook
-
-if __name__ == "__main__":
-    args = utils.parse_args()
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(send_summary_to_discord(blog_name=args.blog_name))
-# kör parge_args()
-# Initialiserar en asynkron loop och kör funktionen send_summary_to_discord tills den är klar.
 ```
+```py
+def format_summary_message(summary_item, group_name, language="en"):
+# Tar en artikel, ett gruppnamn och ett språk som argument. Den formaterar artikeln till ett meddelande som kan skicka till Discord. 
+# Funktionen tar också hänsyn till språket.
+```
+```py
+def truncate_string(input_str, max_len):
+# Denna funktion tar en sträng och en maximal längd som argument och returnerar en trunkerad version av strängen.
+```
+```py
+def hash_summary(summary):
+# Denna funktion genererar en unik hash för varje sammanfattning. Detta används senare för att kontrollera om sammanfattningen redan har skickat eller inte.
+```
+```py
+def read_sent_log():
+def write_sent_log(sent_log):
+# Dessa funktioner hanterar en loggfil som sparar hasharna för de sammanfattningar som redan har skickats.
+```
+```py
+async def send_summary_to_discord(blog_name, language="en"):
+# Tar ett bloggnamn och ett språk som argument.
+# Den läser alla sammanfattningar från en given mapp, skickar de som ännu inte har skickats till Discord, och uppdaterar sedan loggfilen.
+```
+Detta script innehåller också en main och parse-args funktion
+
 ---
 
 ## **summarize.py**
@@ -304,35 +345,61 @@ Den kod tar ett bloggnamn som kommandoradsargument, läser in dess artiklar, gen
 
 ```py
 def get_articles_from_folder(blog_name):
-# Läser in JSON-filer som representerar artiklar från data/data warehouse och returnerar en lista av artiklar.
-
+# Läser bloggartiklar från en mapp och omvandlar dem till en lista av BlogInfo-objekt
+```
+```py
+def get_summaries_from_folder(blog_name):
+# Läser befintliga sammanfattningar från en mapp och omvandlar dem till en lista av BlogSummary-objekt
+```
+```py
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 # Laddar in vår GPT API key från .env filen
 # Detta är inte en funktion, kan dock va bra att ha med
-
-def summarize_text(blog_text):
-# Använder GPT-3.5 turbo för att generera en sammanfattning av en given text.
-
-def transform_to_summary(article: BlogInfo) -> BlogSummary:
-# Tar en BlogInfo-instans, genererar en sammanfattning och returnerar en BlogSummary-instans (datatypes.py)
-
-def save_blog_summaries(articles, blog_name):
-# Sparar genererade sammanfattning i en särskild mapp i data warehouse.
-
-if __name__ == "__main__":
-    args = (utils.parse_args())  
-    blog_name = args.blog_name
-    articles = get_articles_from_folder(blog_name)
-    save_blog_summaries(articles, blog_name)
-# Använder parse_args() för terminal
-# Anropar get_articles_from_folder och save_blog_summaries för att generera och spara sammanfattningar.
 ```
+```py
+def summarize_text(blog_text):
+# Sammanfattar given text baserad på en specifik promptmall med hjälp av OpenAI GPT-3.5 turbo-modellen.
+```
+```py
+def transform_to_summary(article: BlogInfo, model_type) -> BlogSummary:
+# Tar en artikel representerad av ett BlogInfo-objekt, genererar tekniska och icke-tekniska sammanfattningar, och returnerar sedan dem som ett BlogSummary-objekt.
+```
+```py
+def save_blog_summaries(articles, blog_name, model_type):
+# Sparar genererade sammanfattning som en JSON-fil i en särskild mapp i data warehouse.
+```
+```py
+def main(blog_name, model_type):
+# Huvudfunktionen som gör följande:
+# Kontrollerar om sammanfattningarna redan existerar.
+# Om ja, identifierar dem artiklar som ännu inte har sammanfattats.
+# Kallar på 'save_blog_summaries' för att generera och spara sammanfattningar.
+```
+### Vad scriptet gör
 
-## translation_model.py
-
+1. Skriptet börjar med att tolka kommandoordsargument för att identifiera vilken blogg man ska fokusera på och vilken modell man ska använda för sammanfattning.
+2. Därefter anropas main()-funktionen som kontrollerar om en sammanfattningsmapp redan finns för den angivna bloggen.
+3. Om mappen existerar, hämtar dem artiklar och befintliga sammanfattningar för att identifiera vilka artiklar som behöver sammanfattas.
+4. Den kallar sedan på 'save_blog_summaries' för att spara sammanfattningarna.
 ---
 
+## **translation_model.py**
+
+Använder MarianMT-modellen från Helsinki-NLP för översättning, som är en del av "transformers"-biblioteket.
+
+### Funktioner
+
+```py
+def translate_initialised(text, model, tokenizer):
+# Tar in en textsträng, en förtränad modell och en tokenizer, och returnerar den översatta texten.
+```
+```py
+def translate_summaries(blog_name):
+# Går igenom alla JSON-filer i en viss bloggs sammanfattningsmapp och översätter dem.
+# Den sparar sedan de översatta sammanfattningarna i en separat mapp.
+```
+Dessutom finns main(blog_name), och parse_args som fungerar likadant i andra scripts.
 ## **utils.py**
 
 Innehåller en funktion parse_args(), som använder argparse för att tolka ett kommandoradsargument ('--blog_name') och returnera det som ett 'Namespace'-objekt. Detta argument är avsett att specificera vilken bloggkälla som ska behandlas.
@@ -346,4 +413,97 @@ def parse_args():
 # Skapar en 'argparse.ArgumentParzer'-instans för att tolka kommandoradsargument
 # Lägger till ett argument '--blog_name' av typen 'str', som avsett att ta emot namnet på en specifik bloggkälla.
 # Returnerar ett 'Namespace'-objekt som innehåller de argument som har tolkats från kommandoraden.
+```
+---
+
+# **Tester**
+
+Vi har tre test-scripts som utför olika typer av tester för att verifiera olika aspekter av ett större system.
+
+Sammantaget är dessa testskript utformade för att säkerställa att nyhetsflödesapplikationen fungerar som förväntat när det häller att samla in och hantera nyhetsdata, att alla dependencies är installerade och att rätt Python-version används.
+
+## test_dashboard.py
+
+Använder pytest för att genomföra fyra tester
+
+### Funktioner
+
+```py
+@pytest.mark.local_test("Run with 'pytest -m local_test tests/'")
+# decoratorn här testar funktionen som kommer direkt efter
+def test_get_news_data_source_mit():
+    df = get_news_data(news_blog_source="mit")
+    assert "source" in df.columns
+    assert all(df["source"] == "mit")
+# Fungerar korrekt när nyhetskällan är "mit". Det säkerställer att "source"-kolumnen i den returnerade dataframe innehåller endast "mit"
+```
+Utöver denna finns det två till som gör exakt samma sak, fast för andra nyhetskällor (google_ai & ai_blog)
+
+```py
+@pytest.mark.local_test("Run with 'pytest -m local_test tests/'")
+def test_get_news_data_source_all_blogs():
+    df = get_news_data(news_blog_source="all_blogs")
+    assert "source" in df.columns
+    assert set(df["source"].unique()) == {"mit", "google_ai", "ai_blog"}
+# Kan hantera flera nyhetskällor samtidigt och returnerar en dataframe med rätt "source"-värden.
+```
+---
+
+## test_download_blogs_from_rss.py
+
+Utför två tester: 
+
+### Funktioner
+
+```py
+def test_import_project() -> None:
+    print("Running test_import_project...")
+    download_blogs_from_rss.main(blog_name="mit")
+    print("Test completed.")
+# Testar huvudfunktionen 'main()' i 'download_blogs_from_rss' modulen fungerar korrekt med "mit" som nyhetskälla.
+```
+
+```py
+def test_imports():
+    essential_modules = [
+        "pydantic",
+        "argparse",
+        "requests",
+        "newsfeed.download_blogs_from_rss",
+        "dash",
+        "dash_bootstrap_components",
+        "pandas",
+        "dash.dependencies",
+        "bs4",
+        "aiohttp",
+        "discord",
+        "openai",
+        "tiktoken",
+        "dotenv",
+        "langchain",
+    ]
+
+    for module in essential_modules:
+        try:
+            __import__(module)
+        except ImportError:
+            assert False, f"Failed to import {module}"
+# Säkerställer att alla nödvändiga moduler och paket kan importeras korrekt, vilket indikerar att alla dependencies är uppfyllda.
+```
+---
+
+## test_python_version_is_10.py
+
+Utför ett test: 
+
+### Funktion
+
+```py
+def test_python_version():
+    minor_version = sys.version_info[1]
+    major_version = sys.version_info[0]
+    assert (
+        major_version == 3 and minor_version == 10
+    ), f"The expected and required Python version for this project is 3.10.*, but got {major_version}.{minor_version}.*"
+# Kontrollerar att Python-versionen som används för att köra projektet är 3.10. Om det inte är fallet, genereras ett fel.
 ```
