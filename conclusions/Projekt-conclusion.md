@@ -155,7 +155,8 @@ def update_language(n_clicks_english, n_clicks_swedish, data):
     [State("blogs-df", "data"), State("search-input", "value")],
 )
 def display_blogs(choice, language_data, n_clicks, blogs_data, search_query):
-# Hämtar och visar bloggar baserat på flera inputs som dropdown-val, språkpreferens och en search-query. Den sorterar artiklarna efter datum och kan också filtrera dem baserat på sökfrågan.
+# Hämtar och visar bloggar baserat på flera inputs som dropdown-val, språkpreferens och en search-query.
+# Den sorterar artiklarna efter datum och kan också filtrera dem baserat på sökfrågan.
 ```
 ---
 
